@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para la Potibebé ❤️</title>
+    <style>
+        /* ESTILOS GENERALES */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex; /* Centrar todo */
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Evitar barras de desplazamiento */
+        }
+
+        /* LA CAJA BLANCA CENTRAL */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 350px;
+            position: relative;
+            z-index: 100; /* Asegura que esté por encima de todo */
+        }
+
+        h1 {
+            color: #ff4d6d;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .emoji-heart {
+            font-size: 80px;
+            display: block;
+            margin: 20px auto;
+            animation: latido 1s infinite alternate;
+        }
+
+        @keyframes latido {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* BOTONES */
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 60px; /* Espacio reservado para que no salten */
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #btnYes {
+            background-color: #ff4757;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+        }
+        
+        #btnYes:hover {
+            transform: scale(1.05);
+            background-color: #e84118;
+        }
+
+        #btnNo {
+            background-color: #dedede;
+            color: #333;
+            /* Importante: position absolute se activará con JS */
+            position: relative; 
+        }
+
+        /* MENSAJE FINAL (OCULTO AL INICIO) */
+        #finalMessage {
+            display: none;
+        }
+
+        #finalMessage img {
+            width: 100%;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        /* CORAZONES FLOTANTES DE FONDO */
+        .bg-element {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.5);
+            z-index: 1; /* Detrás de la tarjeta */
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(100vh); opacity: 0; }
+            50% { opacity: 1; }
+            to { transform: translateY(-100px); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <div id="questionSection">
+            <h1>¿Quieres ser mi San Valentín Susybeibi?</h1>
+            <span class="emoji-heart">💘</span>
+            
+            <div class="btn-container">
+                <button id="btnYes">¡Claro que sí!</button>
+                <button id="btnNo">No</button>
+            </div>
+        </div>
+
+        <div id="finalMessage">
+            <h1>¡Sabía que dirías que sí! ❤️</h1>
+            <p>Te amo demasido potibebita.</p>
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Q0YjJmYjJmYjJmYjJmYjJmYjJmYjJmYjJmYjJmYjJmYjJmY2lkPTc5MGI3NjEx/26BRv0ThflsHCqDrG/giphy.gif" alt="Amor">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const btnNo = document.getElementById('btnNo');
+        const btnYes = document.getElementById('btnYes');
+        const questionSection = document.getElementById('questionSection');
+        const finalMessage = document.getElementById('finalMessage');
+
+        // FUNCIÓN: Mover el botón "No"
+        function mueveElBoton() {
+            // Ancho y alto de la ventana
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            // Nueva posición aleatoria
+            const newX = Math.random() * (width - 100);
+            const newY = Math.random() * (height - 100);
+
+            // Aplicar estilo 'fixed' para que se mueva libremente por toda la pantalla
+            btnNo.style.position = "fixed";
+            btnNo.style.left = newX + "px";
+            btnNo.style.top = newY + "px";
+        }
+
+        // Eventos para el botón No (PC y Móvil)
+        btnNo.addEventListener('mouseover', mueveElBoton);
+        btnNo.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Evita que se haga click en móvil
+            mueveElBoton();
+        });
+
+        // Evento para el botón Sí
+        btnYes.addEventListener('click', function() {
+            // 1. Ocultar pregunta y mostrar respuesta
+            questionSection.style.display = 'none';
+            finalMessage.style.display = 'block';
+
+            // 2. Lanzar confeti (si la librería cargó)
+            if (typeof confetti === "function") {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        });
+
+        // GENERAR FONDO ANIMADO (Sin afectar la carga)
+        function createBackground() {
+            const symbols = ['❤️', '✨', '🌹', '😻'];
+            const body = document.body;
+            
+            for (let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.classList.add('bg-element');
+                span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // Posición y tamaño aleatorio
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.fontSize = (Math.random() * 30 + 10) + 'px';
+                
+                // Duración de animación aleatoria
+                span.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                span.style.animationDelay = (Math.random() * 5) + 's';
+                
+                body.appendChild(span);
+            }
+        }
+        
+        // Iniciar fondo
+        createBackground();
+    </script>
+</body>
+</html>
